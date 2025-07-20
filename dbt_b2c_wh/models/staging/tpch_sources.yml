@@ -1,0 +1,270 @@
+version: 2
+
+sources:
+
+  - name: tpch
+    database: SNOWFLAKE_SAMPLE_DATA
+    schema: TPCH_SF1
+
+    tables:
+
+      - name: region
+        description: Contains geographic regions. Acts as a parent to nations.
+        columns:
+          - name: R_REGIONKEY
+            description: Primary key for region
+            tests:
+              - not_null
+              - unique
+          - name: R_NAME
+            description: Name of the region
+
+          - name: R_COMMENT
+            description: Comment or description for the region
+
+
+      - name: nation
+        description: Contains countries or nations and links to regions.
+        columns:
+          - name: N_NATIONKEY
+            description: Primary key for nation
+            tests:
+              - not_null
+              - unique
+          - name: N_NAME
+            description: Name of the nation
+
+          - name: N_REGIONKEY
+            description: Foreign key to region
+            tests:
+              - not_null
+              - unique
+              - relationships:
+                  to: source('tpch', 'region')
+                  field: R_REGIONKEY
+          - name: N_COMMENT
+            description: Comment or description for the nation
+
+
+      - name: supplier
+        description: Suppliers providing parts. Linked to nations.
+        columns:
+          - name: S_SUPPKEY
+            description: Primary key for supplier
+            tests:
+              - not_null
+              - unique
+          - name: S_NAME
+            description: Supplier name
+
+          - name: S_ADDRESS
+            description: Supplier address
+
+          - name: S_NATIONKEY
+            description: Foreign key to nation
+            tests:
+              - not_null
+              - unique
+              - relationships:
+                  to: source('tpch', 'nation')
+                  field: N_NATIONKEY
+          - name: S_PHONE
+            description: Phone number of supplier
+
+          - name: S_ACCTBAL
+            description: Supplier account balance
+
+          - name: S_COMMENT
+            description: Comment or description for the supplier
+
+
+      - name: customer
+        description: Customer details including their market segment.
+        columns:
+          - name: C_CUSTKEY
+            description: Primary key for customer
+            tests:
+              - not_null
+              - unique
+          - name: C_NAME
+            description: Customer name
+
+          - name: C_ADDRESS
+            description: Customer address
+
+          - name: C_NATIONKEY
+            description: Foreign key to nation
+            tests:
+              - not_null
+              - unique
+              - relationships:
+                  to: source('tpch', 'nation')
+                  field: N_NATIONKEY
+          - name: C_PHONE
+            description: Phone number of customer
+
+          - name: C_ACCTBAL
+            description: Customer account balance
+
+          - name: C_MKTSEGMENT
+            description: Market segment of the customer
+
+          - name: C_COMMENT
+            description: Comment or description for the customer
+
+
+      - name: part
+        description: List of all parts or items that can be ordered.
+        columns:
+          - name: P_PARTKEY
+            description: Primary key for part
+            tests:
+              - not_null
+              - unique
+          - name: P_NAME
+            description: Name of the part
+
+          - name: P_MFGR
+            description: Manufacturer name
+
+          - name: P_BRAND
+            description: Brand name
+
+          - name: P_TYPE
+            description: Type of part
+
+          - name: P_SIZE
+            description: Size of the part
+
+          - name: P_CONTAINER
+            description: Packaging container
+
+          - name: P_RETAILPRICE
+            description: Retail price of the part
+
+          - name: P_COMMENT
+            description: Comment or description for the part
+
+
+      - name: partsupp
+        description: Bridge table connecting parts and suppliers with supply cost and quantity.
+        columns:
+          - name: PS_PARTKEY
+            description: Foreign key to part
+            tests:
+              - not_null
+              - relationships:
+                  to: source('tpch', 'part')
+                  field: P_PARTKEY
+          - name: PS_SUPPKEY
+            description: Foreign key to supplier
+            tests:
+              - not_null
+              - relationships:
+                  to: source('tpch', 'supplier')
+                  field: S_SUPPKEY
+          - name: PS_AVAILQTY
+            description: Available quantity
+
+          - name: PS_SUPPLYCOST
+            description: Cost of supplying the part
+
+          - name: PS_COMMENT
+            description: Comment or description for the record
+
+
+      - name: orders
+        description: Customer orders placed over time.
+        columns:
+          - name: O_ORDERKEY
+            description: Primary key for order
+            tests:
+              - not_null
+              - unique
+          - name: O_CUSTKEY
+            description: Foreign key to customer
+            tests:
+              - not_null
+              - unique
+              - relationships:
+                  to: source('tpch', 'customer')
+                  field: C_CUSTKEY
+          - name: O_ORDERSTATUS
+            description: Status of the order
+
+          - name: O_TOTALPRICE
+            description: Total price for the order
+
+          - name: O_ORDERDATE
+            description: Date of the order
+
+          - name: O_ORDERPRIORITY
+            description: Priority of the order
+
+          - name: O_CLERK
+            description: Clerk handling the order
+
+          - name: O_SHIPPRIORITY
+            description: Priority for shipping
+
+          - name: O_COMMENT
+            description: Comment or description for the order
+
+
+      - name: lineitem
+        description: Line-level items in orders, tracking shipping and discounts.
+        columns:
+          - name: L_ORDERKEY
+            description: Foreign key to order
+            tests:
+              - not_null
+              - relationships:
+                  to: source('tpch', 'orders')
+                  field: O_ORDERKEY
+          - name: L_PARTKEY
+            description: Foreign key to part
+            tests:
+              - not_null
+          - name: L_SUPPKEY
+            description: Foreign key to supplier
+            tests:
+              - not_null
+          - name: L_LINENUMBER
+            description: Line number within the order
+
+          - name: L_QUANTITY
+            description: Quantity ordered
+
+          - name: L_EXTENDEDPRICE
+            description: Extended price for the line
+
+          - name: L_DISCOUNT
+            description: Discount applied
+
+          - name: L_TAX
+            description: Tax applied
+
+          - name: L_RETURNFLAG
+            description: Return flag
+
+          - name: L_LINESTATUS
+            description: Status of the line
+
+          - name: L_SHIPDATE
+            description: Shipping date
+
+          - name: L_COMMITDATE
+            description: Commitment date
+
+          - name: L_RECEIPTDATE
+            description: Receipt date
+
+          - name: L_SHIPINSTRUCT
+            description: Shipping instructions
+
+          - name: L_SHIPMODE
+            description: Shipping mode
+
+          - name: L_COMMENT
+            description: Comment or description for the line item
+
