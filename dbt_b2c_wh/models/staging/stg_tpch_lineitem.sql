@@ -11,7 +11,7 @@ WITH tpch_lineitem AS (
 )
 
 SELECT
-    md5(concat(order_key, '-', line_number)) AS lineitem_sk,
+    md5(concat(L_ORDERKEY, '-', L_LINENUMBER)) AS lineitem_sk,
     L_ORDERKEY AS order_key,
     L_PARTKEY AS part_key,
     L_SUPPKEY AS supplier_key,
@@ -28,4 +28,5 @@ SELECT
     L_SHIPINSTRUCT AS ship_instructions,
     L_SHIPMODE AS ship_mode,
     L_COMMENT AS line_comment
-FROM tpch_lineitem
+FROM
+    tpch_lineitem
