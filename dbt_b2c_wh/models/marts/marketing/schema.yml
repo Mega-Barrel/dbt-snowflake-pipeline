@@ -1,0 +1,16 @@
+version: 2
+models:
+- name: mart_customer_ltv
+  description: Customer lifetime value with total spend, order count, and lifecycle
+    dates.
+  columns:
+  - name: customer_key
+    description: Unique identifier for the customer
+  - name: total_orders
+    description: Total number of orders placed by the customer
+  - name: total_spend
+    description: Total monetary value of the customer's orders
+  - name: first_order_date
+    description: Date of the customer's first order
+  - name: last_order_date
+    description: Date of the customer's most recent order
